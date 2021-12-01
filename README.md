@@ -9,6 +9,11 @@ The service allows you to:
 2. Start and stop services by pressing a button;
 3. Sort services by configuration file, by state of work. 
 
+## View
+<p align="center">
+<img  src="./readme_assets/3.png" width="80%">
+</p>
+
 ## Test project setup
 For a test run, you can write from the directory
 ```
