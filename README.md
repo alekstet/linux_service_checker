@@ -8,3 +8,10 @@ The service allows you to:
 1. View service name, current job status, systemctl and journalctl help;
 2. Start and stop services by pressing a button;
 3. Sort services by configuration file, by state of work. 
+
+## Project setup
+
+```
+npm install
+npm run serve
+```
