@@ -9,9 +9,8 @@ The service allows you to:
 2. Start and stop services by pressing a button;
 3. Sort services by configuration file, by state of work. 
 
-## Project setup
-
+## Test project setup
+For a test run, you can write from the directory
 ```
-npm install
-npm run serve
+./service_checker
 ```
