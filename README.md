@@ -1,4 +1,4 @@
-# linux_service_checker
+# Linux services checker
 
 This service allows using the web interface to display systemd services running on a Linux system. The server side is written in Golang, the client side is in Vue JS.
 
