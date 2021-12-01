@@ -14,3 +14,10 @@ For a test run, you can write from the directory
 ```
 ./service_checker
 ```
+
+## Project setup
+To run the project as a separate service, copy the ___service_checker.service___ to _/etc/systemd/system_
+```
+systemctl daemon-reload
+systemctl start service_checker
+```
