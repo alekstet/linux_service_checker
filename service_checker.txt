@@ -1,0 +1,16 @@
+
+[Unit]
+Description=service_checker
+After=network.target
+
+[Service]
+WorkingDirectory=/your_path
+ExecStart=/your_path/service_checker
+Type=simple
+RemainAfterExit=yes
+Restart=always
+RestartSec=10s
+User=root
+
+[Install]
+WantedBy=multi-user.target
