@@ -23,7 +23,8 @@ npm run build
 ```
 
 ## Project setup
-To run the project as a separate service, copy the ___service_checker.service___ to _/etc/systemd/system_
+To run the project as a separate service, change path in ___service_checker.txt___ and 
+copy the contents of the file, create a ___service_checker.service___ in _/etc/systemd/system_ and paste the content
 ```
 systemctl daemon-reload
 npm install
