@@ -17,6 +17,8 @@ The service allows you to:
 ## Test project setup
 For a test run, you can write from the directory
 ```
+npm install
+npm run build
 ./service_checker
 ```
 
@@ -24,5 +26,7 @@ For a test run, you can write from the directory
 To run the project as a separate service, copy the ___service_checker.service___ to _/etc/systemd/system_
 ```
 systemctl daemon-reload
+npm install
+npm run build
 systemctl start service_checker
 ```
