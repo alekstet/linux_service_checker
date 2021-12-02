@@ -63,10 +63,12 @@ func main() {
 		}
 
 		for _, j := range services_names {
-			cmd := exec.Command("sudo", "systemctl", "status", j)
+			cmd := exec.Command("ssh", "at01@x14.se.molti.tech", "sudo", "systemctl", "status", j)
+			//cmd := exec.Command("sudo", "systemctl", "status", j)
 			stdout, _ := cmd.CombinedOutput()
 
-			cmd1 := exec.Command("sudo", "journalctl", "-u", j, "-e", "-n")
+			cmd1 := exec.Command("ssh", "at01@x14.se.molti.tech", "sudo", "journalctl", "-u", j, "-e", "-n")
+			//cmd1 := exec.Command("sudo", "journalctl", "-u", j, "-e", "-n")
 			stdout1, _ := cmd1.CombinedOutput()
 
 			status := string(stdout)
@@ -80,6 +82,7 @@ func main() {
 				contain := strings.Contains(word, "(running)")
 				contain1 := strings.Contains(word, "(exited)")
 				contain2 := strings.Contains(word, "(dead)")
+				contain3 := strings.Contains(word, "(auto-restart)")
 				if contain {
 					services_works = append(services_works, "running")
 				}
@@ -88,6 +91,9 @@ func main() {
 				}
 				if contain2 {
 					services_works = append(services_works, "dead")
+				}
+				if contain3 {
+					services_works = append(services_works, "auto-restart")
 				}
 			}
 		}
