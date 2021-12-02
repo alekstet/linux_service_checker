@@ -67,23 +67,20 @@ export default {
     },
     action: function(name, command, index) {
       this.show_stat[index] = 0
-      console.log(command, name, index)
-      setTimeout(() => {
-        var res = {
-          command: command,
-          name: name
-        }
-        fetch("/action", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8'
-          },
-          body: JSON.stringify(res)
-        })
-        .then(resp => console.error(resp))
-        .catch(resp => console.error(resp))
-        this.datas()
-      }, 2000);
+      var res = {
+        command: command,
+        name: name
+      }
+      fetch("/action", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(res)
+      })
+      .then(resp => console.error(resp))
+      .catch(resp => console.error(resp))
+      this.datas()
     },
     sorting: function(arr, type) { 
       if (type=="config") {
