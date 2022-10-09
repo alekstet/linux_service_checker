@@ -1,4 +1,4 @@
-package collector
+package maker
 
 import (
 	"bytes"
@@ -7,6 +7,15 @@ import (
 	"strings"
 	"sync"
 )
+
+type serviceInfo struct {
+	Name        string
+	Description string
+	Loaded      string
+	Active      string
+}
+
+type servicesInfo map[string]serviceInfo
 
 func (store *Store) Collect() *servicesInfo {
 	servicesInfo := make(servicesInfo)
@@ -32,15 +41,6 @@ func (store *Store) Collect() *servicesInfo {
 
 	return &servicesInfo
 }
-
-type serviceInfo struct {
-	Name        string
-	Description string
-	Loaded      string
-	Active      string
-}
-
-type servicesInfo map[string]serviceInfo
 
 func (store *Store) getServiceJournal(serviceName string) (*servicesInfo, error) {
 	//"sudo", "journalctl", "-u", serviceName, "-e", "-n"

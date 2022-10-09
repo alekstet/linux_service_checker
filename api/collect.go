@@ -6,10 +6,10 @@ import (
 	"net/http"
 )
 
-func (store *Store) Datas(w http.ResponseWriter, r *http.Request) {
+func (store *Store) Collect(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	servicesInfo := store.Collector.Collect()
+	servicesInfo := store.Maker.Collect()
 	/* isChanged := store.checkChange(*servicesInfo)
 	fmt.Println(isChanged)
 	if isChanged {

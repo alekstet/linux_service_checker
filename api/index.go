@@ -4,7 +4,7 @@ import "net/http"
 
 func InitRouter(store *Store) {
 	html := http.FileServer(http.Dir("./frontend/dist"))
-	http.HandleFunc("/datas", store.Datas)
-	http.HandleFunc("/action", store.Action)
+	http.HandleFunc("/collect", store.Collect)
+	http.HandleFunc("/make", store.Make)
 	http.Handle("/", html)
 }

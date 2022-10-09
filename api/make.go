@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os/exec"
 )
 
 type Request struct {
@@ -13,7 +12,7 @@ type Request struct {
 	Name    string `json:"name"`
 }
 
-func (store *Store) Action(w http.ResponseWriter, r *http.Request) {
+func (store *Store) Make(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Println(err)
@@ -27,8 +26,7 @@ func (store *Store) Action(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	cmd := exec.Command("sudo", "systemctl", request.Command, request.Name)
-	_, err = cmd.CombinedOutput()
+	err = store.Maker.Make(request.Command, request.Name)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

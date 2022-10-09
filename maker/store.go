@@ -1,8 +1,8 @@
-package collector
+package maker
 
 import "github.com/alekstet/linux_service_checker/conf"
 
-var _ Collector = (*Store)(nil)
+var _ Maker = (*Store)(nil)
 
 type Store struct {
 	Config *conf.Config
