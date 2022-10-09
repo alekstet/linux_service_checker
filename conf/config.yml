@@ -1,9 +1,0 @@
-services_names:
-  - test_service
-  - test_service1
-  - test_service2
-server_name: at01@x14.se.molti.tech
-server_url: :8080
-
-  
-    

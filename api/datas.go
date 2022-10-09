@@ -102,9 +102,9 @@ func (store *Store) getServicesInfo() *servicesInfo {
 	servicesInfo := make(servicesInfo)
 
 	var wg sync.WaitGroup
-	wg.Add(len(store.Config.ServicesNames))
+	wg.Add(len(store.Config.MonitoringServer.ServicesNames))
 
-	for _, service := range store.Config.ServicesNames {
+	for _, service := range store.Config.MonitoringServer.ServicesNames {
 		go func(service string) {
 			info, err := store.getServiceInfo(service, &wg)
 			if err != nil {

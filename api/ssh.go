@@ -26,9 +26,9 @@ func publicKeyFile(file string) ssh.AuthMethod {
 func (store *Store) getCredsConfig() *ssh.ClientConfig {
 	return &ssh.ClientConfig{
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		User:            store.Config.Username,
+		User:            store.Config.MonitoringServer.Username,
 		Auth: []ssh.AuthMethod{
-			ssh.Password(store.Config.Password),
+			ssh.Password(store.Config.MonitoringServer.Password),
 		},
 	}
 }
@@ -36,16 +36,16 @@ func (store *Store) getCredsConfig() *ssh.ClientConfig {
 func (store *Store) getCertificateConfig() *ssh.ClientConfig {
 	return &ssh.ClientConfig{
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		User:            store.Config.Username,
+		User:            store.Config.MonitoringServer.Username,
 		Auth: []ssh.AuthMethod{
-			publicKeyFile(store.Config.PathToPublicKey),
+			publicKeyFile(store.Config.MonitoringServer.PathToPublicKey),
 		},
 	}
 }
 
 func (store *Store) TestSSHconnection() error {
 	var sshConfig *ssh.ClientConfig
-	switch store.Config.Type {
+	switch store.Config.MonitoringServer.Type {
 	case "creds":
 		sshConfig = store.getCredsConfig()
 	case "certificate":
@@ -54,7 +54,7 @@ func (store *Store) TestSSHconnection() error {
 		return errUnknownAuthMethod
 	}
 
-	sshClient, err := ssh.Dial("tcp", store.Config.SSHserverName+store.Config.SSHserverPort, sshConfig)
+	sshClient, err := ssh.Dial("tcp", store.Config.MonitoringServer.ServerURL+store.Config.MonitoringServer.ServerPort, sshConfig)
 	if err != nil {
 		return err
 	}
