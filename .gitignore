@@ -1,0 +1,5 @@
+*.yaml
+bin
+node_modules
+dist
+conf/config.yml

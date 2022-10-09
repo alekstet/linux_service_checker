@@ -1,8 +1,0 @@
-services_names:
-  - test_service
-  - test_service1
-  - test_service2
-server_url: :8080
-
-  
-    

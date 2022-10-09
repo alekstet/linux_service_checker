@@ -2,49 +2,36 @@ package conf
 
 import (
 	"io/ioutil"
-	"log"
 
-	"github.com/olebedev/config"
+	"gopkg.in/yaml.v2"
 )
 
-var services_names []string
+type Config struct {
+	ServicesNames []string `yaml:"services_names"`
+	SSHserverName string   `yaml:"ssh_server_name"`
+	SSHserverPort string   `yaml:"ssh_server_port"`
+	ServerPort    string   `yaml:"server_port"`
+	*AuthMethod   `yaml:"auth_method"`
+}
 
-func ReadConfig() ([]string, string, string) {
-	file, err := ioutil.ReadFile("config.yml")
+type AuthMethod struct {
+	Type            string `yaml:"type"`
+	Username        string `yaml:"username"`
+	Password        string `yaml:"password"`
+	PathToPublicKey string `yaml:"path_to_public_key"`
+}
+
+func ReadConfig() (*Config, error) {
+	file, err := ioutil.ReadFile("conf/config.yml")
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	yamlString := string(file)
 
-	cfg, err := config.ParseYaml(yamlString)
+	var cfg Config
+	err = yaml.Unmarshal(file, &cfg)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	services_names_, err := cfg.List("services_names")
-	if err != nil {
-		log.Fatalf("Error with config file: %v", err)
-	}
-
-	for _, name := range services_names_ {
-		switch name := name.(type) {
-		case string:
-			services_names = append(services_names, name)
-		default:
-			log.Fatalf("wrong type! %v %T\n", name, name)
-		}
-	}
-
-	server_url, err := cfg.String("server_url")
-	if err != nil {
-		log.Fatal(err)
-	}
-	server_name, err := cfg.String("server_name")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Printf("Config read OK\n")
-
-	return services_names, server_url, server_name
+	return &cfg, nil
 }
