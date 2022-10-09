@@ -11,7 +11,7 @@ The service allows you to:
 
 ## View
 <p align="center">
-<img  src="/readme_assets/1.PNG" width="80%">
+<img  src="frontend/readme_assets/1.PNG" width="80%">
 </p>
 
 ## Test project setup
