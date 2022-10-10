@@ -3,7 +3,6 @@ package maker
 import (
 	"bytes"
 	"log"
-	"reflect"
 	"strings"
 	"sync"
 )
@@ -21,9 +20,9 @@ func (store *Store) Collect() *servicesInfo {
 	servicesInfo := make(servicesInfo)
 
 	var wg sync.WaitGroup
-	wg.Add(len(store.Config.MonitoringServer.ServicesNames))
+	wg.Add(len(store.config.MonitoringServer.ServicesNames))
 
-	for _, service := range store.Config.MonitoringServer.ServicesNames {
+	for _, service := range store.config.MonitoringServer.ServicesNames {
 		go func(service string) {
 			info, err := store.getServiceInfo(service, &wg)
 			if err != nil {
@@ -31,8 +30,8 @@ func (store *Store) Collect() *servicesInfo {
 				return
 			}
 
-			store.M.Lock()
-			defer store.M.Unlock()
+			store.mutex.Lock()
+			defer store.mutex.Unlock()
 			servicesInfo[info.Name] = *info
 		}(service)
 	}
@@ -50,7 +49,7 @@ func (store *Store) getServiceJournal(serviceName string) (*servicesInfo, error)
 func (store *Store) getCommandOutput(serviceName string) (string, error) {
 	var stdoutBuf bytes.Buffer
 
-	session, err := store.Client.NewSession()
+	session, err := store.client.NewSession()
 	if err != nil {
 		return "", err
 	}
@@ -61,10 +60,6 @@ func (store *Store) getCommandOutput(serviceName string) (string, error) {
 	session.Run("systemctl" + " " + "status" + " " + serviceName)
 
 	return stdoutBuf.String(), nil
-}
-
-func (store *Store) checkChange(servicesInfo servicesInfo) bool {
-	return !reflect.DeepEqual(store.State, servicesInfo)
 }
 
 func (store *Store) getServiceInfo(serviceName string, wg *sync.WaitGroup) (*serviceInfo, error) {

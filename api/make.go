@@ -26,7 +26,7 @@ func (store *Store) Make(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	err = store.Maker.Make(request.Command, request.Name)
+	err = store.maker.Make(request.Command, request.Name)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

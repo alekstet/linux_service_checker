@@ -5,24 +5,26 @@ import (
 
 	"github.com/alekstet/linux_service_checker/conf"
 	"github.com/alekstet/linux_service_checker/maker"
-	"github.com/alekstet/linux_service_checker/notifyer"
-	"github.com/alekstet/linux_service_checker/notifyer/telegram"
-	"golang.org/x/crypto/ssh"
+	"github.com/alekstet/linux_service_checker/notifier"
 )
 
 type Store struct {
-	Config   *conf.Config
-	Client   *ssh.Client
-	M        sync.Mutex
-	Notifyer notifyer.Notifyer
-	Maker    maker.Maker
+	config    *conf.Config
+	mutex     sync.Mutex
+	notifiers []notifier.Notifier
+	maker     maker.Maker
 }
 
-func NewStore(config *conf.Config) *Store {
-	return &Store{
-		Config:   config,
-		Notifyer: telegram.NewTelegramClient(config.NotifyerPlatform.Telegram.Token),
-		Maker:    maker.NewStore(config),
-		M:        sync.Mutex{},
+func NewStore(config *conf.Config) (*Store, error) {
+	makerStore, err := maker.NewStore(config)
+	if err != nil {
+		return nil, err
 	}
+
+	return &Store{
+		config:    config,
+		notifiers: []notifier.Notifier{},
+		maker:     makerStore,
+		mutex:     sync.Mutex{},
+	}, nil
 }

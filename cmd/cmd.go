@@ -3,6 +3,7 @@ package cmd
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/alekstet/linux_service_checker/api"
@@ -18,11 +19,14 @@ func Run() error {
 		return fmt.Errorf("error while reading config %w", err)
 	}
 
-	store := api.NewStore(config)
-
-	err = store.TestSSHconnection()
+	store, err := api.NewStore(config)
 	if err != nil {
-		return fmt.Errorf("error while tesing ssh connection %w", err)
+		return fmt.Errorf("error while creating store %w", err)
+	}
+
+	err = store.RegisterNotifier()
+	if err != nil {
+		log.Println(err)
 	}
 
 	api.InitRouter(store)

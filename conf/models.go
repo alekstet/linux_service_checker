@@ -3,7 +3,7 @@ package conf
 type Config struct {
 	MonitoringServer *MonitoringServer `yaml:"monitoring_server"`
 	ExecutionServer  *ExecutionServer  `yaml:"execution_server"`
-	NotifyerPlatform *NotifyerPlatform `yaml:"notifyer_platform"`
+	NotifierPlatform *NotifierPlatform `yaml:"notifier_platform"`
 }
 
 type ExecutionServer struct {
@@ -25,9 +25,9 @@ type AuthMethod struct {
 	PathToPublicKey string `yaml:"path_to_public_key"`
 }
 
-type NotifyerPlatform struct {
-	Telegram  *TelegramData `yaml:"telegram"`
-	SlackData *SlackData    `yaml:"slack"`
+type NotifierPlatform struct {
+	TelegramData *TelegramData `yaml:"telegram"`
+	SlackData    *SlackData    `yaml:"slack"`
 }
 
 type TelegramData struct {

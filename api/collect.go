@@ -6,17 +6,21 @@ import (
 	"net/http"
 )
 
+func (store *Store) change() {
+	for _, notifier := range store.notifiers {
+		err := notifier.Notify("", "")
+		if err != nil {
+			return
+		}
+	}
+}
+
 func (store *Store) Collect(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	servicesInfo := store.Maker.Collect()
-	/* isChanged := store.checkChange(*servicesInfo)
-	fmt.Println(isChanged)
-	if isChanged {
-		store.Notifyer.Notify("key", "value")
-	} */
+	servicesInfo := store.maker.Collect()
 
-	//store.State = *servicesInfo
+	store.change()
 
 	jsonResp, err := json.Marshal(servicesInfo)
 	if err != nil {
