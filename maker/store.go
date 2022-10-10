@@ -12,8 +12,8 @@ var _ Maker = (*Store)(nil)
 
 type Store struct {
 	config *conf.Config
-	mutex  sync.Mutex
 	client *ssh.Client
+	mutex  sync.Mutex
 }
 
 func NewStore(config *conf.Config) (*Store, error) {

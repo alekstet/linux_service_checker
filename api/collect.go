@@ -4,15 +4,23 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"sync"
 )
 
 func (store *Store) change() {
+	var wg sync.WaitGroup
+	wg.Add(len(store.notifiers))
 	for _, notifier := range store.notifiers {
-		err := notifier.Notify("", "")
-		if err != nil {
-			return
-		}
+		notifier := notifier
+		go func() {
+			err := notifier.Notify("", "", &wg)
+			if err != nil {
+				return
+			}
+		}()
 	}
+
+	wg.Wait()
 }
 
 func (store *Store) Collect(w http.ResponseWriter, r *http.Request) {

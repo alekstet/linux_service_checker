@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/alekstet/linux_service_checker/notifier"
 )
@@ -18,7 +19,9 @@ func NewTelegramClient(token string) *TelegramClient {
 	}
 }
 
-func (client *TelegramClient) Notify(service, data string) error {
+func (client *TelegramClient) Notify(service, data string, wg *sync.WaitGroup) error {
+	defer wg.Done()
+
 	fmt.Println("from tg")
 	return nil
 }

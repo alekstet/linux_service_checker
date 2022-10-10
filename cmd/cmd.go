@@ -31,6 +31,8 @@ func Run() error {
 
 	api.InitRouter(store)
 
+	store.Log.Info().Msg("Program is starting...")
+
 	err = http.ListenAndServe(config.ExecutionServer.ServerPort, nil)
 	if err != nil {
 		return err

@@ -2,9 +2,11 @@ package maker
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"strings"
 	"sync"
+	"time"
 )
 
 type serviceInfo struct {
@@ -30,6 +32,14 @@ func (store *Store) Collect() *servicesInfo {
 				return
 			}
 
+			_, err = store.getServiceJournal(service)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			time.Sleep(time.Second * 2)
+
 			store.mutex.Lock()
 			defer store.mutex.Unlock()
 			servicesInfo[info.Name] = *info
@@ -42,11 +52,19 @@ func (store *Store) Collect() *servicesInfo {
 }
 
 func (store *Store) getServiceJournal(serviceName string) (*servicesInfo, error) {
-	//"sudo", "journalctl", "-u", serviceName, "-e", "-n"
+	output, err := store.getCommandOutput("journalctl" + " " + "-u" + serviceName + "-e" + "-n")
+	if err != nil {
+		return nil, err
+	}
+
+	splittedOutput := strings.Split(output, "\n")
+
+	fmt.Println(splittedOutput)
+
 	return nil, nil
 }
 
-func (store *Store) getCommandOutput(serviceName string) (string, error) {
+func (store *Store) getCommandOutput(cmd string) (string, error) {
 	var stdoutBuf bytes.Buffer
 
 	session, err := store.client.NewSession()
@@ -57,7 +75,7 @@ func (store *Store) getCommandOutput(serviceName string) (string, error) {
 	defer session.Close()
 
 	session.Stdout = &stdoutBuf
-	session.Run("systemctl" + " " + "status" + " " + serviceName)
+	session.Run(cmd)
 
 	return stdoutBuf.String(), nil
 }
@@ -65,7 +83,7 @@ func (store *Store) getCommandOutput(serviceName string) (string, error) {
 func (store *Store) getServiceInfo(serviceName string, wg *sync.WaitGroup) (*serviceInfo, error) {
 	defer wg.Done()
 
-	output, err := store.getCommandOutput(serviceName)
+	output, err := store.getCommandOutput("systemctl" + " " + "status" + " " + serviceName)
 	if err != nil {
 		return nil, err
 	}
