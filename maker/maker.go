@@ -1,6 +1,6 @@
 package maker
 
 type Maker interface {
-	Collect() *servicesInfo
+	Collect() *ServicesInfo
 	Make(service, action string) error
 }

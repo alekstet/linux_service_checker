@@ -15,18 +15,18 @@
     <b-list-group>
       <b-list-group-item v-for="(index, value) in tasks" :key="value" active class="flex-column align-items-start">
         <div class="d-flex w-100 justify-content-sm-between">
-          <h5 class="mb-1">{{index[0]}}</h5>
+          <h4 class="mb-1">{{value}}</h4>
+          
           <small>
             <b-button-group>
-              <h5 class="h5" :class="{active : index[2] == 'running'}">{{index[2]}}</h5>
-              <b-button variant="danger" v-if="index[2] == 'running'" @click="action(index[0], 'stop', index)">stop</b-button>
-              <b-button variant="success" v-if="index[2] == 'exited' || index[2] == 'dead'" @click="action(index[0], 'start', value)">start</b-button>
-              <b-button variant="info" @click="status(value)">status</b-button>
+              <h5 class="h5" :class="{active : index.Active == 'active(running)'}">{{index.Active}}</h5>
+              <b-button variant="danger" v-if="index.Active == 'active(running)'" @click="make(value, 'stop')">stop</b-button>
+              <b-button variant="success" v-if="index.Active == 'active(exited)' || index.Active == 'inactive(dead)'" @click="make(value, 'start')">start</b-button>
               <b-button variant="secondary" @click="journal(value)">journal</b-button>
+              
             </b-button-group>
           </small>
         </div>
-        <p v-if="show_stat[value] == 1" class="mb-1">{{index[1]}}</p>
         <p v-if="show_journal[value] == 1" class="mb-1">{{index[3]}}</p> 
         <hr id="hr">
       </b-list-group-item>   
@@ -42,36 +42,30 @@ export default {
     return {
       tasks: [],
       sort: "config",
-      show_stat: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
       show_journal: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }
   },
   created: function() {
     setInterval(() => {
-      this.datas()
+      this.collect()
     }, 4000);
   },
   methods: {
-    datas: function() {
-      fetch("/datas")
+    collect: function() {
+      fetch("/collect")
       .then(resp => resp.json())
       .then(data => {
-        var services = []
-        for (const key in data) {
-          var ans = [key, data[key][0], data[key][1], data[key][2]]
-          services.push(ans)
-        }
-        this.sorting(services, this.sort)
-        })
+        this.tasks = data
+      })
+      //this.sorting(services, this.sort)
       .catch(resp => console.error(resp))
     },
-    action: function(name, command, index) {
-      this.show_stat[index] = 0
+    make: function(name, command) {
       var res = {
+        name: name,
         command: command,
-        name: name
       }
-      fetch("/action", {
+      fetch("/make", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;charset=utf-8'
@@ -106,14 +100,6 @@ export default {
     change_sort: function(n) {
       this.sort = n
     },
-    status: function(index) {
-      var a = this.show_stat[index]
-      if (a==1) {
-        this.show_stat[index] = 0
-      } else {
-        this.show_stat[index] = 1
-      }
-    },
     journal: function(index) {
       var a = this.show_journal[index]
       if (a==1) {
@@ -128,7 +114,7 @@ export default {
 
 <style>
 body {
-  background-color: #31D2F2;
+  background-color: #6bdef5;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

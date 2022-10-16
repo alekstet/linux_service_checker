@@ -31,7 +31,8 @@ type NotifierPlatform struct {
 }
 
 type TelegramData struct {
-	Token string `yaml:"token"`
+	Token  string `yaml:"token"`
+	ChatID int64  `yaml:"chat_id"`
 }
 
 type SlackData struct {

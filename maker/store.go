@@ -8,21 +8,21 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-var _ Maker = (*Store)(nil)
+var _ Maker = (*MakerImpl)(nil)
 
-type Store struct {
+type MakerImpl struct {
 	config *conf.Config
 	client *ssh.Client
 	mutex  sync.Mutex
 }
 
-func NewStore(config *conf.Config) (*Store, error) {
+func NewMaker(config *conf.Config) (*MakerImpl, error) {
 	client, err := ssh2.GetClient(config)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Store{
+	return &MakerImpl{
 		config: config,
 		mutex:  sync.Mutex{},
 		client: client,

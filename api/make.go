@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -25,6 +26,8 @@ func (store *Store) Make(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
+
+	fmt.Println("---------------------------------------------------------", request)
 
 	err = store.maker.Make(request.Command, request.Name)
 	if err != nil {

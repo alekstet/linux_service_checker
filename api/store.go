@@ -13,6 +13,7 @@ import (
 
 type Store struct {
 	config    *conf.Config
+	state     maker.ServicesInfo
 	Log       zerolog.Logger
 	notifiers []notifier.Notifier
 	maker     maker.Maker
@@ -20,7 +21,7 @@ type Store struct {
 }
 
 func NewStore(config *conf.Config) (*Store, error) {
-	makerStore, err := maker.NewStore(config)
+	makerImpl, err := maker.NewMaker(config)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +30,7 @@ func NewStore(config *conf.Config) (*Store, error) {
 		config:    config,
 		Log:       zerolog.New(os.Stdout).With().Timestamp().Logger(),
 		notifiers: []notifier.Notifier{},
-		maker:     makerStore,
+		maker:     makerImpl,
 		mutex:     sync.Mutex{},
 	}, nil
 }

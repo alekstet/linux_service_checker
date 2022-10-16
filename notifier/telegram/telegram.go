@@ -1,27 +1,40 @@
 package telegram
 
 import (
-	"fmt"
+	"log"
 	"sync"
 
 	"github.com/alekstet/linux_service_checker/notifier"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 var _ notifier.Notifier = (*TelegramClient)(nil)
 
 type TelegramClient struct {
-	Token string
+	token  string
+	chatID int64
+	bot    *tgbotapi.BotAPI
 }
 
-func NewTelegramClient(token string) *TelegramClient {
+func NewTelegramClient(token string, chatID int64) *TelegramClient {
+	bot, err := tgbotapi.NewBotAPI(token)
+	if err != nil {
+		log.Panic(err)
+	}
+
 	return &TelegramClient{
-		Token: token,
+		token:  token,
+		bot:    bot,
+		chatID: chatID,
 	}
 }
 
-func (client *TelegramClient) Notify(service, data string, wg *sync.WaitGroup) error {
+func (client *TelegramClient) Notify(service, exStatus, curStatus string, wg *sync.WaitGroup) error {
 	defer wg.Done()
 
-	fmt.Println("from tg")
+	msg := tgbotapi.NewMessage(client.chatID, service+" change status from: "+exStatus+" to: "+curStatus)
+	client.bot.Send(msg)
+
 	return nil
 }

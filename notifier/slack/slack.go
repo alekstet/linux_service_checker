@@ -19,7 +19,7 @@ func NewSlackClient(token string) *SlackClient {
 	}
 }
 
-func (client *SlackClient) Notify(service, data string, wg *sync.WaitGroup) error {
+func (client *SlackClient) Notify(service, exStatus, curStatus string, wg *sync.WaitGroup) error {
 	defer wg.Done()
 
 	fmt.Println("from slack")
