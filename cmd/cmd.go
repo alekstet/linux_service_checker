@@ -12,8 +12,6 @@ import (
 
 func Run() error {
 	configPath := flag.String("config", "", "path to config file")
-	level := flag.String("level", "", "level of program control")
-	fmt.Println(level)
 	flag.Parse()
 
 	config, err := conf.ReadConfig(*configPath)
@@ -28,7 +26,7 @@ func Run() error {
 
 	err = store.RegisterNotifier()
 	if err != nil {
-		log.Println(err)
+		log.Println("error while register notifiers", err)
 	}
 
 	api.InitRouter(store)

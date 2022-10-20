@@ -1,6 +1,7 @@
 package telegram
 
 import (
+	"fmt"
 	"log"
 	"sync"
 
@@ -30,10 +31,11 @@ func NewTelegramClient(token string, chatID int64) *TelegramClient {
 	}
 }
 
-func (client *TelegramClient) Notify(service, exStatus, curStatus string, wg *sync.WaitGroup) error {
+func (client *TelegramClient) Notify(service, curStatus, exStatus string, wg *sync.WaitGroup) error {
 	defer wg.Done()
 
-	msg := tgbotapi.NewMessage(client.chatID, service+" change status from: "+exStatus+" to: "+curStatus)
+	text := fmt.Sprintf("service '%s' changes status from: '%s' to '%s'", service, exStatus, curStatus)
+	msg := tgbotapi.NewMessage(client.chatID, text)
 	client.bot.Send(msg)
 
 	return nil

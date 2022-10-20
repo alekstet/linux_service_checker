@@ -10,11 +10,11 @@ import (
 
 var errNoNotifiers = errors.New("error no notifiers")
 
-func (store *Store) registerNotifier(notifier notifier.Notifier) {
+func (store *store) registerNotifier(notifier notifier.Notifier) {
 	store.notifiers = append(store.notifiers, notifier)
 }
 
-func (store *Store) RegisterNotifier() error {
+func (store *store) RegisterNotifier() error {
 	if store.config.NotifierPlatform.TelegramData.Token != "" {
 		client := telegram.NewTelegramClient(store.config.NotifierPlatform.TelegramData.Token, store.config.NotifierPlatform.TelegramData.ChatID)
 		store.registerNotifier(client)

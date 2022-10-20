@@ -4,33 +4,46 @@
     <div>
       <b-dropdown class="m-md-2">
         <template #button-content>
-          sort by <strong>{{sort}}</strong>
+          show: <strong>{{show}}</strong>
         </template>
-        <b-dropdown-item></b-dropdown-item>
-        <b-dropdown-item @click="change_sort('config')">by config</b-dropdown-item>
-        <b-dropdown-item @click="change_sort('work')">by work</b-dropdown-item>
-        <b-dropdown-item @click="change_sort('stop')">by stop</b-dropdown-item>
+        <b-dropdown-item @click="change_show('active')">active</b-dropdown-item>
+        <b-dropdown-item @click="change_show('inactive')">inactive</b-dropdown-item>
+        <b-dropdown-item @click="change_show('all')">all</b-dropdown-item>
       </b-dropdown>
+      <div>
+        <b-form inline>
+          <label class="sr-only" for="inline-form-input-name">Name</label>
+          <b-form-input
+            id="inline-form-input-name"
+            class="mb-2 mr-sm-2 mb-sm-0"
+            placeholder="Jane Doe"
+            v-model="service"
+          ></b-form-input>
+          <div class="mt-2">Value: {{ service }}</div>
+          <b-button variant="primary" @click="search()">Search</b-button>
+        </b-form>
+      </div>
     </div>
     <b-list-group>
-      <b-list-group-item v-for="(index, value) in tasks" :key="value" active class="flex-column align-items-start">
+      <b-list-group-item v-for="(index, value, num) in tasks" :key="value" active class="flex-column align-items-start">
         <div class="d-flex w-100 justify-content-sm-between">
           <h4 class="mb-1">{{value}}</h4>
+          <h4 class="mb-1">{{num}}</h4>
           
           <small>
             <b-button-group>
-              <h5 class="h5" :class="{active : index.Active == 'active(running)'}">{{index.Active}}</h5>
+              <h5 class="h5" :class="[{active : index.Active == 'active(running)'}, {activeEx : index.Active == 'active(exited)'}]">{{index.Active}}</h5>
               <b-button variant="danger" v-if="index.Active == 'active(running)'" @click="make(value, 'stop')">stop</b-button>
               <b-button variant="success" v-if="index.Active == 'active(exited)' || index.Active == 'inactive(dead)'" @click="make(value, 'start')">start</b-button>
-              <b-button variant="secondary" @click="journal(value)">journal</b-button>
-              
+              <b-button variant="secondary" @click="journal(num)">journal</b-button>
             </b-button-group>
           </small>
         </div>
-        <p v-if="show_journal[value] == 1" class="mb-1">{{index[3]}}</p> 
+        <p v-if="arr[num] == 1" class="mb-1">{{index.Journal}}</p> 
         <hr id="hr">
       </b-list-group-item>   
     </b-list-group>
+    <h5>ARR {{this.arr}}</h5>
   </div>
 </template>
 
@@ -40,24 +53,26 @@ export default {
   name: 'App',
   data: function () {
     return {
+      service: "",
+      show: "all",
       tasks: [],
-      sort: "config",
-      show_journal: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      arr : [],
     }
   },
   created: function() {
     setInterval(() => {
       this.collect()
-    }, 4000);
+    }, 2000);
   },
   methods: {
     collect: function() {
-      fetch("/collect")
+      fetch("/collect?show=" + this.show)
       .then(resp => resp.json())
       .then(data => {
         this.tasks = data
+        var len = Object.keys(data).length
+        this.arr = new Array(len).fill(0)
       })
-      //this.sorting(services, this.sort)
       .catch(resp => console.error(resp))
     },
     make: function(name, command) {
@@ -76,37 +91,21 @@ export default {
       .catch(resp => console.error(resp))
       this.datas()
     },
-    sorting: function(arr, type) { 
-      if (type=="config") {
-        this.tasks = arr
-      }
-      if (type=="work") {
-        arr.sort(function(a, b) {
-        var A = a[2].length
-        var B = b[2].length
-        return B - A
-        })
-        this.tasks = arr
-      }
-      if (type=="stop") {
-        arr.sort(function(a, b) {
-        var A = a[2].length
-        var B = b[2].length
-        return A - B
-        })
-        this.tasks = arr
-      }   
+    change_show: function(n) {
+      this.show = n
     },
-    change_sort: function(n) {
-      this.sort = n
+    search: function() {
+      console.log("hello")
     },
     journal: function(index) {
-      var a = this.show_journal[index]
+      console.log(index)
+      var a = this.arr[index]
       if (a==1) {
-        this.show_journal[index] = 0
+        this.arr[index] = 0
       } else {
-        this.show_journal[index] = 1
+        this.arr[index] = 1
       }
+      console.log(this.arr)
     }
   }
 } 
@@ -135,6 +134,9 @@ body {
   margin-top: 0.5rem;
   margin-right: 0.5rem;
   color: #ff5f5f;
+}
+.activeEx {
+  color: #f8b155;
 }
 .active {
   color: #1bff00;

@@ -7,8 +7,7 @@ type Config struct {
 }
 
 type ExecutionServer struct {
-	FrontendPath string `yaml:"frontend_path"`
-	ServerPort   string `yaml:"server_port"`
+	ServerPort string `yaml:"server_port"`
 }
 
 type MonitoringServer struct {

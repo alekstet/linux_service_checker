@@ -11,24 +11,24 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type Store struct {
+type store struct {
+	Log       zerolog.Logger
 	config    *conf.Config
 	state     maker.ServicesInfo
-	Log       zerolog.Logger
 	notifiers []notifier.Notifier
 	maker     maker.Maker
 	mutex     sync.Mutex
 }
 
-func NewStore(config *conf.Config) (*Store, error) {
+func NewStore(config *conf.Config) (*store, error) {
 	makerImpl, err := maker.NewMaker(config)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Store{
-		config:    config,
+	return &store{
 		Log:       zerolog.New(os.Stdout).With().Timestamp().Logger(),
+		config:    config,
 		notifiers: []notifier.Notifier{},
 		maker:     makerImpl,
 		mutex:     sync.Mutex{},

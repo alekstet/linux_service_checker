@@ -1,8 +1,10 @@
 package maker
 
-import "bytes"
+import (
+	"bytes"
+)
 
-func (store *MakerImpl) getCommandOutput(cmd string) (string, error) {
+func (store *makerImpl) getCommandOutput(cmd string) (string, error) {
 	var stdoutBuf bytes.Buffer
 
 	session, err := store.client.NewSession()
@@ -13,10 +15,7 @@ func (store *MakerImpl) getCommandOutput(cmd string) (string, error) {
 	defer session.Close()
 
 	session.Stdout = &stdoutBuf
-	err = session.Run(cmd)
-	if err != nil {
-		return "", err
-	}
+	session.Run(cmd)
 
 	return stdoutBuf.String(), nil
 }
