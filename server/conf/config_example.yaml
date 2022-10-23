@@ -1,0 +1,16 @@
+monitoring_server:
+  services_names: ["test_service"]
+  auth_method: 
+    type: creds
+    username: user
+    password: password
+    path_to_public_key: C:/Users/user/.ssh/test.ppk
+  server_url: 127.0.0.1
+  server_port: :22
+execution_server:
+  server_port: :8080
+database:
+  connection_string: postgresql://...
+
+  
+    

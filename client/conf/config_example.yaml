@@ -1,0 +1,19 @@
+monitoring_server:
+  services_names: ["test_service"]
+collector_server:
+  server_url: 127.0.0.1
+  server_port: :8080
+execution_server:
+  server_url: 127.0.0.1
+  server_port: :8081
+database:
+  connection_string: postgresql://...
+notifier_platform:
+  slack:
+    token: my_token 
+  telegram:
+    token: my_token
+    chat_id: -11111
+
+  
+    

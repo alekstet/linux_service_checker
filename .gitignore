@@ -1,4 +1,4 @@
-*.yaml
+config.yaml
 bin
 node_modules
 dist
