@@ -16,7 +16,7 @@
           <b-form-input
             id="inline-form-input-name"
             class="mb-2 mr-sm-2 mb-sm-0"
-            placeholder="Jane Doe"
+            placeholder="Service name"
             v-model="service"
           ></b-form-input>
           <div class="mt-2">Value: {{ service }}</div>
@@ -113,14 +113,14 @@ export default {
 
 <style>
 body {
-  background-color: #6bdef5;
+  background-color: #b0f2ff;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #5b7794;
   margin-top: 60px;
 }
 #hr {

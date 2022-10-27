@@ -5,6 +5,11 @@ type Config struct {
 	ExecutionServer  *ExecutionServer  `yaml:"execution_server"`
 	NotifierPlatform *NotifierPlatform `yaml:"notifier_platform"`
 	Database         *Database         `yaml:"database"`
+	Log              *Log              `yaml:"log"`
+}
+
+type Log struct {
+	LogFile string `yaml:"log_file"`
 }
 
 type ExecutionServer struct {

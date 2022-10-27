@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -56,10 +57,17 @@ func (store *store) Collect(w http.ResponseWriter, r *http.Request) {
 
 	change := store.checkChange(*servicesInfo)
 	if len(change) != 0 {
+		fmt.Println("im here")
 		store.notify(change)
 	}
 
 	store.state = *servicesInfo
+
+	fmt.Println((*servicesInfo)["test"].Active)
+
+	store.maker.Collect()
+
+	fmt.Println((*servicesInfo)["test"].Active)
 
 	jsonResp, err := json.Marshal(servicesInfo)
 	if err != nil {

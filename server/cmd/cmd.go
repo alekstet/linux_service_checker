@@ -16,16 +16,20 @@ func Run() error {
 
 	config, err := conf.ReadConfig(*configPath)
 	if err != nil {
-		return fmt.Errorf("error while reading config %w", err)
+		return fmt.Errorf("error while reading config: %w", err)
 	}
 
 	makerImpl, err := maker.NewMaker(config)
 	if err != nil {
-		return fmt.Errorf("error while creating maker %w", err)
+		return fmt.Errorf("error while creating maker: %w", err)
 	}
 
 	store := api.NewStore(makerImpl, config)
 	api.InitRouter(store)
+	err = store.RegisterNotifier()
+	if err != nil {
+		return fmt.Errorf("error while registering notifier: %w", err)
+	}
 
 	store.Log.Info().Msg("Server is starting...")
 

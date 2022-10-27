@@ -17,6 +17,7 @@ notifier_platform:
     chat_id: -11111
 database:
   connection_string: postgresql://...
-
+log:
+  log_file: test_log.log
   
     
