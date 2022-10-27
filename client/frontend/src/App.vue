@@ -62,7 +62,7 @@ export default {
   created: function() {
     setInterval(() => {
       this.collect()
-    }, 2000);
+    }, 1000);
   },
   methods: {
     collect: function() {
@@ -89,7 +89,7 @@ export default {
       })
       .then(resp => console.error(resp))
       .catch(resp => console.error(resp))
-      this.datas()
+      this.collect()
     },
     change_show: function(n) {
       this.show = n

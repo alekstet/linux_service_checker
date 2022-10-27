@@ -1,4 +1,4 @@
-package collector
+package api
 
 type ServicesInfo map[string]ServiceInfo
 

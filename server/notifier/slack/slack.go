@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/alekstet/linux_service_checker/client/notifier"
+	"github.com/alekstet/linux_service_checker/server/notifier"
 )
 
 var _ notifier.Notifier = (*SlackClient)(nil)

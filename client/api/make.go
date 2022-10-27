@@ -12,7 +12,7 @@ type Request struct {
 }
 
 func (store *store) Make(w http.ResponseWriter, r *http.Request) {
-	request, err := http.NewRequest("POST", store.config.ExecutionServer.ServerURL+store.config.ExecutionServer.ServerPort, r.Body)
+	request, err := http.NewRequest("POST", store.config.CollectorServer.ServerURL+store.config.CollectorServer.ServerPort+"/make", r.Body)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

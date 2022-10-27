@@ -5,7 +5,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/alekstet/linux_service_checker/client/notifier"
+	"github.com/alekstet/linux_service_checker/server/notifier"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )

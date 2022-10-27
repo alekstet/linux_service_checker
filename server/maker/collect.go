@@ -6,19 +6,82 @@ import (
 	"log"
 	"strings"
 	"sync"
-	"time"
+
+	"github.com/jackc/pgx/v5"
 )
 
-func (impl *makerImpl) CollectProcess() {
-	go func() {
-		for {
-			impl.collect()
-			time.Sleep(time.Second * 2)
+var _ Maker = (*makerImpl)(nil)
+
+func (impl *makerImpl) getRows(active string) (pgx.Rows, error) {
+	var rows pgx.Rows
+
+	pool, err := impl.dbPool.Acquire(context.Background())
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	defer pool.Release()
+
+	switch active {
+	case "all":
+		updateStatement := `SELECT * FROM services`
+		rows, err = pool.Query(context.Background(), updateStatement)
+		if err != nil {
+			log.Println(err)
+			return nil, err
 		}
-	}()
+	case "active":
+		updateStatement := `SELECT * FROM services WHERE active=$1 OR active=$2`
+		rows, err = pool.Query(context.Background(), updateStatement, "active(exited)", "active(running)")
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+	case "inactive":
+		updateStatement := `SELECT * FROM services WHERE active=$1`
+		rows, err = pool.Query(context.Background(), updateStatement, "inactive(dead)")
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+	}
+
+	return rows, nil
 }
 
-func (impl *makerImpl) collect() *ServicesInfo {
+func (impl *makerImpl) Get(active string) (*ServicesInfo, error) {
+	rows, err := impl.getRows(active)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	servicesInfo := make(ServicesInfo)
+
+	for rows.Next() {
+		values, err := rows.Values()
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+
+		var serviceInfo ServiceInfo
+
+		serviceInfo.Name = values[0].(string)
+		serviceInfo.Description = values[1].(string)
+		serviceInfo.Loaded = values[2].(string)
+		serviceInfo.Active = values[3].(string)
+		serviceInfo.Journal = values[4].(string)
+
+		servicesInfo[serviceInfo.Name] = serviceInfo
+
+	}
+
+	return &servicesInfo, nil
+}
+
+func (impl *makerImpl) Collect() *ServicesInfo {
 	if impl.checkEmptyTable() {
 		impl.setTable()
 	}
@@ -86,47 +149,4 @@ func (store *makerImpl) getServiceInfo(serviceName string) (*ServiceInfo, error)
 	}
 
 	return store.serverInfoParser(output)
-}
-
-func (store *makerImpl) serverInfoParser(output string) (*ServiceInfo, error) {
-	splittedOutput := strings.Split(output, "\n")
-
-	var firstLine, secondLine, thirdLine string
-
-	firstLine = splittedOutput[0]
-	secondLine = splittedOutput[1]
-	thirdLine = splittedOutput[2]
-
-	splittedFirstLine := strings.Split(firstLine, " ")
-	name := splittedFirstLine[1]
-
-	res := strings.Index(firstLine, "-")
-	description := firstLine[res+2:]
-
-	splittedSecondLine := strings.Split(secondLine, " ")
-	var loadedStatus []string
-	for _, word := range splittedSecondLine {
-		if word != "" {
-			loadedStatus = append(loadedStatus, word)
-		}
-	}
-
-	loaded := loadedStatus[1]
-
-	splittedThirdLine := strings.Split(thirdLine, " ")
-	var activeStatus []string
-	for _, word := range splittedThirdLine {
-		if word != "" {
-			activeStatus = append(activeStatus, word)
-		}
-	}
-
-	active := activeStatus[1] + activeStatus[2]
-
-	return &ServiceInfo{
-		Name:        name,
-		Description: description,
-		Loaded:      loaded,
-		Active:      active,
-	}, nil
 }

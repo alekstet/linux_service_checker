@@ -19,20 +19,13 @@ func Run() error {
 		return fmt.Errorf("error while reading config %w", err)
 	}
 
-	/* pool, err := api.NewPGXPool()
-	if err != nil {
-		return fmt.Errorf("error while creating pgx pool %w", err)
-	} */
-
 	makerImpl, err := maker.NewMaker(config)
 	if err != nil {
 		return fmt.Errorf("error while creating maker %w", err)
 	}
 
-	store := api.NewStore(makerImpl)
+	store := api.NewStore(makerImpl, config)
 	api.InitRouter(store)
-
-	makerImpl.CollectProcess()
 
 	store.Log.Info().Msg("Server is starting...")
 

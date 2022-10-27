@@ -31,7 +31,7 @@ func (impl *makerImpl) checkEmptyTable() bool {
 func (impl *makerImpl) setTable() {
 	for _, service := range impl.config.MonitoringServer.ServicesNames {
 		insertStatement := "INSERT INTO services (name, description, active, loaded, journal) values ($1, $2, $3, $4, $5)"
-		_, err := impl.dbPool.Exec(context.Background(), insertStatement, service, "descr", "", "", "")
+		_, err := impl.dbPool.Exec(context.Background(), insertStatement, service, "", "", "", "")
 		if err != nil {
 			log.Println(err)
 			return

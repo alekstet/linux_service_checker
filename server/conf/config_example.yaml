@@ -9,6 +9,12 @@ monitoring_server:
   server_port: :22
 execution_server:
   server_port: :8080
+notifier_platform:
+  slack:
+    token: my_token 
+  telegram:
+    token: my_token
+    chat_id: -11111
 database:
   connection_string: postgresql://...
 
