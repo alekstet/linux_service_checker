@@ -36,7 +36,10 @@ func (client *TelegramClient) Notify(service, curStatus, exStatus string, wg *sy
 
 	text := fmt.Sprintf("service '%s' changes status from: '%s' to '%s'", service, exStatus, curStatus)
 	msg := tgbotapi.NewMessage(client.chatID, text)
-	client.bot.Send(msg)
+	_, err := client.bot.Send(msg)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

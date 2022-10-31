@@ -1,7 +1,6 @@
 package api
 
 import (
-	"os"
 	"sync"
 
 	"github.com/alekstet/linux_service_checker/server/conf"
@@ -12,7 +11,7 @@ import (
 )
 
 type store struct {
-	Log       zerolog.Logger
+	Logger    *zerolog.Logger
 	state     maker.ServicesInfo
 	notifiers []notifier.Notifier
 	config    *conf.Config
@@ -20,9 +19,9 @@ type store struct {
 	mutex     sync.Mutex
 }
 
-func NewStore(maker maker.Maker, config *conf.Config) *store {
+func NewStore(maker maker.Maker, config *conf.Config, logger *zerolog.Logger) *store {
 	return &store{
-		Log:    zerolog.New(os.Stdout).With().Timestamp().Logger(),
+		Logger: logger,
 		config: config,
 		mutex:  sync.Mutex{},
 		maker:  maker,

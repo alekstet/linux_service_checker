@@ -7,11 +7,18 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func NewLogger(config *conf.Config) (*zerolog.Logger, error) {
-	_, err := os.Open(config.Log.LogFile)
+func NewLogger(config *conf.Config) (*zerolog.Logger, *os.File, error) {
+	file, err := os.Create(config.Log.LogFile)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return nil, nil
+	file, err = os.OpenFile(config.Log.LogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	logger := zerolog.New(file).With().Timestamp().Logger()
+
+	return &logger, file, nil
 }

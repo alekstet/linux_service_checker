@@ -1,5 +1,7 @@
 package conf
 
+import "time"
+
 type Config struct {
 	MonitoringServer *MonitoringServer `yaml:"monitoring_server"`
 	ExecutionServer  *ExecutionServer  `yaml:"execution_server"`
@@ -13,7 +15,8 @@ type Log struct {
 }
 
 type ExecutionServer struct {
-	ServerPort string `yaml:"server_port"`
+	ServerPort string        `yaml:"server_port"`
+	PollPeriod time.Duration `yaml:"poll_period"`
 }
 
 type Database struct {

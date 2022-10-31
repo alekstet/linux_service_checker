@@ -15,7 +15,6 @@ type store struct {
 	config *conf.Config
 	client http.Client
 	mutex  sync.Mutex
-	state  map[string]ServiceInfo
 }
 
 func NewStore(config *conf.Config) *store {

@@ -38,3 +38,11 @@ func (impl *makerImpl) setTable() {
 		}
 	}
 }
+
+func (impl *makerImpl) TruncateTable() {
+	_, err := impl.dbPool.Exec(context.Background(), "TRUNCATE services")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+}

@@ -2,6 +2,7 @@ package maker
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/jackc/pgx/v5"
@@ -35,6 +36,10 @@ func (impl *makerImpl) Get(active string) (*ServicesInfo, error) {
 
 	}
 
+	if impl.isAlive {
+		return nil, fmt.Errorf("backend is not alive")
+	}
+
 	return &servicesInfo, nil
 }
 
@@ -51,22 +56,22 @@ func (impl *makerImpl) getRows(active string) (pgx.Rows, error) {
 
 	switch active {
 	case "all":
-		updateStatement := `SELECT * FROM services`
-		rows, err = pool.Query(context.Background(), updateStatement)
+		selectStatement := `SELECT * FROM services`
+		rows, err = pool.Query(context.Background(), selectStatement)
 		if err != nil {
 			log.Println(err)
 			return nil, err
 		}
 	case "active":
-		updateStatement := `SELECT * FROM services WHERE active=$1 OR active=$2`
-		rows, err = pool.Query(context.Background(), updateStatement, "active(exited)", "active(running)")
+		selectStatement := `SELECT * FROM services WHERE active=$1 OR active=$2`
+		rows, err = pool.Query(context.Background(), selectStatement, "active(exited)", "active(running)")
 		if err != nil {
 			log.Println(err)
 			return nil, err
 		}
 	case "inactive":
-		updateStatement := `SELECT * FROM services WHERE active=$1`
-		rows, err = pool.Query(context.Background(), updateStatement, "inactive(dead)")
+		selectStatement := `SELECT * FROM services WHERE active=$1`
+		rows, err = pool.Query(context.Background(), selectStatement, "inactive(dead)")
 		if err != nil {
 			log.Println(err)
 			return nil, err

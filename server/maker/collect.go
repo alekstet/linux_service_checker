@@ -3,61 +3,73 @@ package maker
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"sync"
+	"time"
 )
 
-func (impl *makerImpl) Collect() *ServicesInfo {
+func (impl *makerImpl) Collect(period time.Duration) {
+	go func() {
+		for {
+			impl.collect()
+			time.Sleep(period)
+		}
+	}()
+}
+
+func (impl *makerImpl) collect() {
+	fmt.Println("im collect")
+	var outerError error
 	if impl.checkEmptyTable() {
 		impl.setTable()
 	}
-
-	servicesInfo := make(ServicesInfo)
 
 	var wg sync.WaitGroup
 	wg.Add(len(impl.config.MonitoringServer.ServicesNames))
 
 	for _, service := range impl.config.MonitoringServer.ServicesNames {
 		go func(service string) {
-			defer wg.Done()
-
-			info, err := impl.getServiceInfo(service)
+			err := impl.collectService(service, &wg)
 			if err != nil {
-				log.Println(err)
-				return
+				outerError = err
 			}
-
-			info.Journal, err = impl.getServiceJournal(service)
-			if err != nil {
-				log.Println(err)
-				return
-			}
-
-			pool, err := impl.dbPool.Acquire(context.Background())
-			if err != nil {
-				log.Println(err)
-				return
-			}
-
-			defer pool.Release()
-
-			updateStatement := `UPDATE services SET description=$1, loaded=$2, active=$3, journal=$4 WHERE name=$5`
-			_, err = pool.Exec(context.Background(), updateStatement, info.Description, info.Loaded, info.Active, info.Journal, strings.TrimSuffix(info.Name, ".service"))
-			if err != nil {
-				log.Println(err)
-				return
-			}
-
-			impl.mutex.Lock()
-			defer impl.mutex.Unlock()
-			servicesInfo[info.Name] = *info
 		}(service)
 	}
 
 	wg.Wait()
 
-	return &servicesInfo
+	if outerError != nil {
+		impl.isAlive = true
+	}
+}
+
+func (impl *makerImpl) collectService(service string, wg *sync.WaitGroup) error {
+	defer wg.Done()
+
+	info, err := impl.getServiceInfo(service)
+	if err != nil {
+		return err
+	}
+
+	info.Journal, err = impl.getServiceJournal(service)
+	if err != nil {
+		return err
+	}
+
+	pool, err := impl.dbPool.Acquire(context.Background())
+	if err != nil {
+		return err
+	}
+
+	defer pool.Release()
+
+	updateStatement := `UPDATE services SET description=$1, loaded=$2, active=$3, journal=$4 WHERE name=$5`
+	_, err = pool.Exec(context.Background(), updateStatement, info.Description, info.Loaded, info.Active, info.Journal, strings.TrimSuffix(info.Name, ".service"))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (store *makerImpl) getServiceJournal(serviceName string) (string, error) {

@@ -9,6 +9,7 @@ monitoring_server:
   server_port: :22
 execution_server:
   server_port: :8080
+  poll_period: 1s
 notifier_platform:
   slack:
     token: my_token 
