@@ -16,6 +16,7 @@ func (store *store) GetOne(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		store.Logger.Err(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("error occured"))
 		return
 	}
 
@@ -40,6 +41,10 @@ func (store *store) Get(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		store.Logger.Err(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		m := make(map[string]string)
+		m["error"] = "error occured"
+		resp, _ := json.Marshal(m)
+		w.Write(resp)
 		return
 	}
 

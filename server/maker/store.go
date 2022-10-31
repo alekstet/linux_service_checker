@@ -11,11 +11,11 @@ import (
 var _ Maker = (*makerImpl)(nil)
 
 type makerImpl struct {
-	config  *conf.Config
-	client  *ssh.Client
-	mutex   sync.Mutex
-	dbPool  *pgxpool.Pool
-	isAlive bool
+	config       *conf.Config
+	client       *ssh.Client
+	mutex        sync.Mutex
+	dbPool       *pgxpool.Pool
+	collectError error
 }
 
 func NewMaker(config *conf.Config, dbPool *pgxpool.Pool, client *ssh.Client) *makerImpl {

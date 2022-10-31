@@ -23,7 +23,7 @@ func (impl *makerImpl) GetOne(name string) (*ServiceInfo, error) {
 		return nil, err
 	}
 
-	if impl.isAlive {
+	if impl.collectError != nil {
 		return nil, fmt.Errorf("backend is not alive")
 	}
 

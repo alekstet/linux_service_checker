@@ -18,8 +18,6 @@ func (impl *makerImpl) Collect(period time.Duration) {
 }
 
 func (impl *makerImpl) collect() {
-	fmt.Println("im collect")
-	var outerError error
 	if impl.checkEmptyTable() {
 		impl.setTable()
 	}
@@ -29,22 +27,20 @@ func (impl *makerImpl) collect() {
 
 	for _, service := range impl.config.MonitoringServer.ServicesNames {
 		go func(service string) {
-			err := impl.collectService(service, &wg)
-			if err != nil {
-				outerError = err
-			}
+			impl.collectError = impl.collectService(service, &wg)
+			fmt.Println(impl.collectError)
 		}(service)
 	}
 
-	wg.Wait()
+	fmt.Println("here")
 
-	if outerError != nil {
-		impl.isAlive = true
-	}
+	wg.Wait()
 }
 
 func (impl *makerImpl) collectService(service string, wg *sync.WaitGroup) error {
 	defer wg.Done()
+
+	fmt.Println("collectService")
 
 	info, err := impl.getServiceInfo(service)
 	if err != nil {

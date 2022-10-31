@@ -21,6 +21,7 @@
           ></b-form-input>
           <div class="mt-2">Value: {{ service }}</div>
           <b-button variant="primary" @click="search()">Search</b-button>
+          <h5 v-if="error">Error occured</h5>
         </b-form>
       </div>
     </div>
@@ -53,6 +54,7 @@ export default {
   name: 'App',
   data: function () {
     return {
+      err : false,
       service: "",
       show: "all",
       tasks: [],
@@ -70,6 +72,10 @@ export default {
       .then(resp => resp.json())
       .then(data => {
         this.tasks = data
+        console.log(data)
+        for (let index = 0; index < data.length; index++) {
+          console.log(index, data[index])
+        }
         var len = Object.keys(data).length
         this.arr = new Array(len).fill(0)
       })

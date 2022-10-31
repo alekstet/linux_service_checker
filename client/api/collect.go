@@ -10,7 +10,6 @@ import (
 var showQueryParams = "show"
 
 func (store *store) Collect(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("here")
 	showParams := r.URL.Query().Get(showQueryParams)
 	url := store.config.CollectorServer.ServerURL + store.config.CollectorServer.ServerPort
 	urlPath := "/collect" + "?" + showQueryParams + "=" + showParams
@@ -32,6 +31,8 @@ func (store *store) Collect(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
+
+	fmt.Println(string(result))
 
 	w.Write(result)
 }

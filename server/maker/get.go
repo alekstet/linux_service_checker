@@ -36,7 +36,7 @@ func (impl *makerImpl) Get(active string) (*ServicesInfo, error) {
 
 	}
 
-	if impl.isAlive {
+	if impl.collectError != nil {
 		return nil, fmt.Errorf("backend is not alive")
 	}
 
